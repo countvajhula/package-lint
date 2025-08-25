@@ -67,6 +67,10 @@ name of the main file as the prefix to validate against.
 The path can be absolute or relative to that of the linted file.")
 (put 'package-lint-main-file 'safe-local-variable #'stringp)
 
+(defvar package-lint-check-installable t
+  "If true, check whether dependencies are installable.")
+(put 'package-lint-check-installable 'safe-local-variable #'booleanp)
+
 
 ;;; Compatibility
 
@@ -448,7 +452,8 @@ Return a list of well-formed dependencies, same as
                  "More than one expression provided."))
               (let ((deps (package-lint--check-well-formed-dependencies position parsed-deps)))
                 (package-lint--check-emacs-version deps)
-                (package-lint--check-packages-installable deps)
+                (when package-lint-check-installable
+                  (package-lint--check-packages-installable deps))
                 (package-lint--check-deps-use-non-snapshot-version deps)
                 (package-lint--check-deps-do-not-use-zero-versions deps)
                 (package-lint--check-cl-lib-version deps)
